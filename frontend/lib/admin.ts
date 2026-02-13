@@ -23,3 +23,10 @@ export async function updatecomics(id: number, title: string, author: string, de
     return data.data;
 }
 
+export async function addchapter(comicId: number, chapterNumber: number, title: string, content: string) {
+    const data = await apiFetch(`/api/admin/chapters/add?comicId=${comicId}`, {
+        method: "POST",
+        body: JSON.stringify({ chapterNumber, title, content }),
+    });
+    return data.data;
+}

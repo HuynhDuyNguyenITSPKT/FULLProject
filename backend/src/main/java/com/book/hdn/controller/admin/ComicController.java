@@ -2,15 +2,9 @@ package com.book.hdn.controller.admin;
 
 import com.book.hdn.dto.request.ComicsRequest;
 import com.book.hdn.dto.response.ApiResponse;
-import com.book.hdn.entity.Comic;
-import com.book.hdn.repository.ComicRepository;
-import com.book.hdn.repository.UserRepository;
-import com.book.hdn.service.CommicService;
-import com.book.hdn.service.CustomUserDetailsService;
+import com.book.hdn.service.ComicInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,44 +12,36 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ComicController {
 
-    private final ComicRepository repo;
-    private final CommicService commicService;
+    private final ComicInterface comicService;
 
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse> create(@RequestBody ComicsRequest comic) {
-        ApiResponse response = new ApiResponse();
-        Comic newComic = new Comic();
-        newComic.setTitle(comic.getTitle());
-        newComic.setDescription(comic.getDescription());
-        newComic.setAuthor(comic.getAuthor());
-        newComic.setCoverImage(comic.getCoverImage());
-        repo.save(newComic);
-        response.setSussess(true);
-        response.setData(newComic);
-        commicService.clear();
+    public ResponseEntity<ApiResponse> create(@RequestBody ComicsRequest request) {
+        return ResponseEntity.ok(comicService.create(request));
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ApiResponse> update(
+            @PathVariable Long id,
+            @RequestBody ComicsRequest request
+    ) {
+        ApiResponse response = comicService.update(id, request);
+
+        if (!response.getSussess()) {
+            return ResponseEntity.notFound().build();
+        }
+
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        repo.deleteById(id);
-    }
+    public ResponseEntity<ApiResponse> delete(@PathVariable Long id) {
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable Long id, @RequestBody ComicsRequest comic) {
-        ApiResponse response = new ApiResponse();
-        Comic existingComic = repo.findById(id).orElse(null);
-        if (existingComic == null) {
+        ApiResponse response = comicService.delete(id);
+
+        if (!response.getSussess()) {
             return ResponseEntity.notFound().build();
         }
-        existingComic.setTitle(comic.getTitle());
-        existingComic.setDescription(comic.getDescription());
-        existingComic.setAuthor(comic.getAuthor());
-        existingComic.setCoverImage(comic.getCoverImage());
-        repo.save(existingComic);
-        response.setSussess(true);
-        response.setData(existingComic);
-        commicService.clear();
+
         return ResponseEntity.ok(response);
     }
 }

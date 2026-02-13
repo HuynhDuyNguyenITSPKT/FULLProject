@@ -6,6 +6,7 @@ import com.book.hdn.entity.Chapter;
 import com.book.hdn.entity.Comic;
 import com.book.hdn.repository.ChapterRepository;
 import com.book.hdn.repository.ComicRepository;
+import com.book.hdn.service.ChapterServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,22 +18,11 @@ import org.springframework.web.bind.annotation.*;
 public class ChapterController {
 
     @Autowired
-    private ChapterRepository chapterRepository;
-    @Autowired
-    private ComicRepository comicRepository;
+    private final ChapterServiceImpl chapterService;
 
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addChapter(@RequestBody ChapterRequest chapter, @RequestParam("comicId") Long comicId) {
-        Comic comic = comicRepository.findById(comicId).orElse(null);
-        if (comic == null) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "Comic not found"));
-        }
-        Chapter newChapter = new Chapter();
-        newChapter.setChapterNumber(chapter.getChapterNumber());
-        newChapter.setTitle(chapter.getTitle());
-        newChapter.setContent(chapter.getContent());
-        newChapter.setComic(comic);
-        Chapter savedChapter = chapterRepository.save(newChapter);
+        chapterService.addChapter(chapter, comicId);
         return ResponseEntity.ok(new ApiResponse(true, "Chapter added successfully"));
     }
 }

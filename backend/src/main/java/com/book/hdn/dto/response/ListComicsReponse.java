@@ -18,4 +18,7 @@ public class ListComicsReponse implements Serializable {
     private String author;
     private String coverImage;
     private String description;
+
+    private Long viewsCount;
+    private Long lastWeekViews;
 }
