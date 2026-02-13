@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { getBookById, getall } from "@/lib/book";
+import { getBookById, getall , increasecomics} from "@/lib/book";
 
 type Chapter = {
     id: number;
@@ -54,6 +54,22 @@ export default function BookDetailPage() {
             }
         };
 
+
+        const handleIncreaseView = async () => {
+            const view = `comic_view_${id}`;
+
+            if (!localStorage.getItem(view)) {
+                try {
+                    const dataview = await increasecomics(id);
+                    if (dataview) {
+                        localStorage.setItem(view, "viewed");
+                    }
+                } catch (error) {
+                    console.error("Lỗi tăng view:", error);
+                }
+            }
+        };
+        handleIncreaseView();
         fetchChapters();
         fetchBook();
     }, [id]);

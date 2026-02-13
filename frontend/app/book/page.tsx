@@ -1,13 +1,15 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getall } from "@/lib/book"; // sửa lại đúng path của bạn
+import { getall  } from "@/lib/book"; // sửa lại đúng path của bạn
 
 type Comic = {
     id: number;
     title: string;
     author: string;
     coverImage: string;
+    lastWeekViews: number,
+    viewsCount: number
 };
 
 export default function BookPage() {
@@ -25,6 +27,7 @@ export default function BookPage() {
                 setLoading(false);
             }
         };
+
 
         fetchData();
     }, []);
@@ -54,6 +57,12 @@ export default function BookPage() {
                         </h3>
                         <p className="text-sm text-zinc-500 mt-1">
                             {book.author}
+                        </p>
+                        <p className="text-sm text-zinc-500 mt-1">
+                            Tổng lượt xem : {book.viewsCount}
+                        </p>
+                        <p className="text-sm text-zinc-500 mt-1">
+                            Tổng lượt xem tuần : {book.lastWeekViews}
                         </p>
                     </div>
                 </div>

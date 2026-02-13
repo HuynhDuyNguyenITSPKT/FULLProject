@@ -35,6 +35,8 @@ public class CommicService implements ComicInterface {
                     dto.setAuthor(comic.getAuthor());
                     dto.setCoverImage(comic.getCoverImage());
                     dto.setDescription(comic.getDescription());
+                    dto.setViewsCount(comic.getViewsCount());
+                    dto.setLastWeekViews(comic.getLastWeekViews());
                     return dto;
                 })
                 .toList();
@@ -124,5 +126,13 @@ public class CommicService implements ComicInterface {
         dto.setContent(chapter.getContent());
 
         return dto;
+    }
+
+    @Override
+    @CacheEvict(value = "comics", allEntries = true)
+    public ApiResponse increaseViewCount(Long comicId) {
+        comicRepository.increaseViewCount(comicId);
+
+        return new ApiResponse(true, "View count increased");
     }
 }

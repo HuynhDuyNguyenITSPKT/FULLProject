@@ -30,3 +30,4 @@ export async function addchapter(comicId: number, chapterNumber: number, title: 
     });
     return data.data;
 }
+

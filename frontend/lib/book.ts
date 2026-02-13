@@ -20,3 +20,10 @@ export async function GetChaptersByComicId(comicId: number,ChapterNumber: number
     });
     return data.data;
 }
+
+export async function increasecomics(id: number) {
+    const data = await apiFetch(`/api/comics/viewcomic/${id}`, {
+        method: "GET",
+    });
+    return data.data;
+}

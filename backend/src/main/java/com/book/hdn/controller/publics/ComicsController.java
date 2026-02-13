@@ -52,4 +52,15 @@ public class ComicsController {
 
         return ResponseEntity.ok(new ApiResponse(true, chapter));
     }
+
+    @GetMapping("/viewcomic/{comicId}")
+    public ResponseEntity<ApiResponse> incrementViewCount(@PathVariable Long comicId) {
+        ApiResponse response = comicService.increaseViewCount(comicId);
+
+        if (!response.getSussess()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(response);
+    }
 }
