@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState , useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getBookById, getall , increasecomics} from "@/lib/book";
@@ -22,6 +22,7 @@ type Book = {
 export default function BookDetailPage() {
     const params = useParams();
     const id = Number(params.id);
+    const hasIncreased = useRef(false);
 
     const [chapters, setChapters] = useState<Chapter[]>([]);
     const [book, setBook] = useState<Book | null>(null);
@@ -56,11 +57,14 @@ export default function BookDetailPage() {
 
 
         const handleIncreaseView = async () => {
+            if (hasIncreased.current) return;
+            hasIncreased.current = true;
             const view = `comic_view_${id}`;
 
             if (!localStorage.getItem(view)) {
                 try {
                     const dataview = await increasecomics(id);
+                    console.log("Đã gửi request tăng view");
                     if (dataview) {
                         localStorage.setItem(view, "viewed");
                     }

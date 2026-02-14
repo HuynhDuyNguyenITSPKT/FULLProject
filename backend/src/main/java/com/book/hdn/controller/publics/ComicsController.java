@@ -23,6 +23,17 @@ public class ComicsController {
         return ResponseEntity.ok(new ApiResponse(true, comics));
     }
 
+    @GetMapping("/top/viewWeek")
+    public ResponseEntity<ApiResponse> topViewWeek(@RequestParam(defaultValue = "7") int limit) {
+        List<ListComicsReponse> comics = comicService.getAll()
+                .stream()
+                .sorted((c1, c2) -> Long.compare(c2.getLastWeekViews(), c1.getLastWeekViews()))
+                .limit(limit)
+                .toList();
+
+        return ResponseEntity.ok(new ApiResponse(true, comics));
+    }
+
     @GetMapping("/{comicId}")
     public ResponseEntity<ApiResponse> getComicById(@PathVariable Long comicId) {
 
@@ -36,6 +47,8 @@ public class ComicsController {
 
         return ResponseEntity.ok(new ApiResponse(true, chapters));
     }
+
+
 
     @GetMapping("/{comicId}/{chapterNumber}")
     public ResponseEntity<ApiResponse> getChapter(

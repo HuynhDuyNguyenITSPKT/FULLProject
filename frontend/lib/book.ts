@@ -27,3 +27,10 @@ export async function increasecomics(id: number) {
     });
     return data.data;
 }
+
+export async function hotcomics(limit: number) {
+    const data = await apiFetch(`/api/comics/top/viewWeek?limit=${limit}`, {
+        method: "GET",
+    });
+    return data.data;
+}
