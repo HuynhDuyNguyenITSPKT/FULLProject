@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState , useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { getBookById, getall , increasecomics} from "@/lib/book";
+import { getBookById, getall, increasecomics } from "@/lib/book";
 
 type Chapter = {
     id: number;
@@ -28,6 +28,12 @@ export default function BookDetailPage() {
     const [book, setBook] = useState<Book | null>(null);
     const [loadingChapters, setLoadingChapters] = useState(true);
     const [loadingBook, setLoadingBook] = useState(true);
+    const [search, setSearch] = useState("");
+
+    const filteredChapters = chapters.filter((chapter) =>
+        chapter.title.toLowerCase().includes(search.toLowerCase()) ||
+        chapter.chapterNumber.toString().includes(search)
+    );
 
     useEffect(() => {
         if (isNaN(id)) return;
@@ -55,7 +61,6 @@ export default function BookDetailPage() {
             }
         };
 
-
         const handleIncreaseView = async () => {
             if (hasIncreased.current) return;
             hasIncreased.current = true;
@@ -73,6 +78,7 @@ export default function BookDetailPage() {
                 }
             }
         };
+
         handleIncreaseView();
         fetchChapters();
         fetchBook();
@@ -96,7 +102,6 @@ export default function BookDetailPage() {
 
     return (
         <div className="max-w-5xl mx-auto p-6">
-
             {/* Thông tin sách */}
             <div className="flex gap-6 mb-10">
                 <img
@@ -120,18 +125,27 @@ export default function BookDetailPage() {
                 </div>
             </div>
 
+            {/* Ô tìm kiếm */}
+            <input
+                type="text"
+                placeholder="Tìm chương..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full mb-6 p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
             {/* Danh sách chương */}
             <h2 className="text-2xl font-semibold mb-6">
                 Danh sách chương
             </h2>
 
             <div className="space-y-4">
-                {chapters.length === 0 ? (
+                {filteredChapters.length === 0 ? (
                     <p className="text-zinc-500">
-                        Chưa có chương nào
+                        Không tìm thấy chương
                     </p>
                 ) : (
-                    chapters.map((chapter) => (
+                    filteredChapters.map((chapter) => (
                         <Link
                             key={chapter.id}
                             href={`/book/${id}/chapter/${chapter.chapterNumber}`}

@@ -1,8 +1,10 @@
+version: '3.9'
+
 services:
 
   mysql:
     image: mysql:8
-    container_name: mysql
+    container_name: mysql-container
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 1234
@@ -11,47 +13,38 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
 
   redis:
     image: redis:7
-    container_name: redis
+    container_name: redis-container
     ports:
       - "6379:6379"
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-      interval: 5s
-      timeout: 3s
-      retries: 5
 
   backend:
     build: ./backend
-    container_name: springboot
-    ports:
-      - "8080:8080"
+    container_name: springboot-container
     depends_on:
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - mysql
+      - redis
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/comics_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 1234
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
+      APP_CORS_ORIGINS: http://localhost:3000
+    ports:
+      - "8080:8080"
 
   frontend:
     build: ./frontend
-    container_name: nextjs
-    ports:
-      - "3000:3000"
+    container_name: nextjs-container
     depends_on:
       - backend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8080
+    ports:
+      - "3000:3000"
 
 volumes:
   mysql_data:
