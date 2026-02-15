@@ -13,3 +13,5 @@ docker system prune -a --volumes
 
 // chạy lại ví du
 docker-compose up --build backend
+
+docker compose up -d

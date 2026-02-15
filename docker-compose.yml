@@ -49,6 +49,8 @@ services:
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
       APP_CORS_ORIGINS: http://localhost:3000
+      SENDER_EMAIL_ADDRESS: hdnit3ltvspkt@gmail.com
+      SENDER_EMAIL_PASSWORD: jycgdvzwkngsfnmd
     ports:
       - "8080:8080"
 
