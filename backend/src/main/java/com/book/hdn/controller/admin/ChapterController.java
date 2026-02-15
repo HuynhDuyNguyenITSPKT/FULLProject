@@ -2,10 +2,6 @@ package com.book.hdn.controller.admin;
 
 import com.book.hdn.dto.request.ChapterRequest;
 import com.book.hdn.dto.response.ApiResponse;
-import com.book.hdn.entity.Chapter;
-import com.book.hdn.entity.Comic;
-import com.book.hdn.repository.ChapterRepository;
-import com.book.hdn.repository.ComicRepository;
 import com.book.hdn.service.ChapterServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

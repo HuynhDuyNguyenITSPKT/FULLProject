@@ -13,21 +13,37 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   redis:
-    image: redis:7
-    container_name: redis-container
-    ports:
-      - "6379:6379"
+      image: redis:7-alpine
+      container_name: redis-container
+      restart: always
+      # Thêm lệnh này để chắc chắn Redis lắng nghe mọi kết nối
+      command: ["redis-server", "--bind", "0.0.0.0", "--protected-mode", "no"]
+      ports:
+        - "6379:6379"
+      healthcheck:
+        test: ["CMD", "redis-cli", "ping"]
+        interval: 5s
+        timeout: 5s
+        retries: 10
 
   backend:
     build: ./backend
     container_name: springboot-container
+    restart: always
     depends_on:
-      - mysql
-      - redis
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/comics_db
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/comics_db?allowPublicKeyRetrieval=true&useSSL=false
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 1234
       SPRING_DATA_REDIS_HOST: redis
@@ -39,10 +55,11 @@ services:
   frontend:
     build: ./frontend
     container_name: nextjs-container
+    restart: always
     depends_on:
       - backend
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8080
+      NEXT_PUBLIC_API_URL: http://backend:8080
     ports:
       - "3000:3000"
 
